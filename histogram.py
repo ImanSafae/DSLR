@@ -1,5 +1,4 @@
 from utils import *
-from describe import ft_describe
 
 def extract_house(df: pd.DataFrame, house: str):
     houses = ['Gryffindor', 'Hufflepuff', 'Ravenclaw', 'Slytherin']
@@ -18,6 +17,32 @@ def extract_house(df: pd.DataFrame, house: str):
         print(e)
     return ret
 
+def draw_hists(cleaned_df: pd.DataFrame):
+    subjects = ['Arithmancy', 'Astronomy', 'Herbology', 'Defense Against the Dark Arts', 'Divination', 'Muggle Studies', 'Ancient Runes', 'History of Magic', 'Transfiguration', 'Potions', 'Care of Magical Creatures', 'Charms', 'Flying']
+    houses = ['Ravenclaw', 'Gryffindor', 'Hufflepuff', 'Slytherin']
+    try:
+        for col in cleaned_df:
+            if col not in subjects:
+                continue
+            new_df = cleaned_df[[col, 'Hogwarts House']]
+                
+            ravenclaw_values = (extract_house(new_df, 'Ravenclaw'))
+            gryffindor_values = (extract_house(new_df, 'Gryffindor'))
+            hufflepuff_values = (extract_house(new_df, 'Hufflepuff'))
+            slytherin_values = (extract_house(new_df, 'Slytherin'))
+
+            _= plt.hist(ravenclaw_values[col], bins=10, color=(21/255, 0, 1, 0.5), label='Ravenclaw')
+            _ = plt.hist(gryffindor_values[col], bins=10, color=(237/255, 40/255, 40/255, 0.5), label='Gryffindor')
+            _ = plt.hist(hufflepuff_values[col], bins=10, color=(242/255, 231/255, 21/255, 0.5), label='Hufflepuff')
+            _ = plt.hist(slytherin_values[col], bins=10, color=(43/255, 124/255, 32/255, 0.5), label='Slytherin')
+            _ = plt.xlabel("Grades")
+            _ = plt.ylabel("Frequency")
+            _ = plt.title(col)
+            _ = plt.legend()
+            plt.show()
+    except Exception as e:
+        print(e)
+        sys.exit(1)
         
 
 if __name__ == "__main__":
@@ -42,22 +67,28 @@ if __name__ == "__main__":
 
         print("cleaned_df:\n", cleaned_df.shape)
 
-        for col in cleaned_df.columns: 
-            if col != 'Hogwarts House':
-                print("Column:", col)
+        # for col in cleaned_df.columns: 
+        #     if col != 'Hogwarts House':
+        #         print("Column:", col)
 
-                # Extraire la colonne + Hogwarts House dans un nouveau dataframe
-                new_df = cleaned_df[[col, 'Hogwarts House']]
+        #         # Extraire la colonne + Hogwarts House dans un nouveau dataframe
+        #         new_df = cleaned_df[[col, 'Hogwarts House']]
                 
-                ravenclaw_values = (extract_house(new_df, 'Ravenclaw')).values.tolist()
-                gryffindor_values = (extract_house(new_df, 'Gryffindor')).values.tolist()
-                hufflepuff_values = (extract_house(new_df, 'Hufflepuff')).values.tolist()
-                slytherin_values = (extract_house(new_df, 'Slytherin')).values.tolist()
+        #         ravenclaw_values = (extract_house(new_df, 'Ravenclaw'))
+        #         gryffindor_values = (extract_house(new_df, 'Gryffindor'))
+        #         hufflepuff_values = (extract_house(new_df, 'Hufflepuff'))
+        #         slytherin_values = (extract_house(new_df, 'Slytherin'))
 
-                print("ravenclaw values:\n", ravenclaw_values)
-                print("gryffindor values:\n", gryffindor_values)
-                print("hufflepuff values:\n", hufflepuff_values)
-                print("slytherin values:\n", slytherin_values)
+        #         _= plt.hist(ravenclaw_values[col], bins=10, color=(21/255, 0, 1, 0.5), label='Ravenclaw')
+        #         _ = plt.hist(gryffindor_values[col], bins=10, color=(237/255, 40/255, 40/255, 0.5), label='Gryffindor')
+        #         _ = plt.hist(hufflepuff_values[col], bins=10, color=(242/255, 231/255, 21/255, 0.5), label='Hufflepuff')
+        #         _ = plt.hist(slytherin_values[col], bins=10, color=(43/255, 124/255, 32/255, 0.5), label='Slytherin')
+        #         _ = plt.xlabel("Grades")
+        #         _ = plt.ylabel("Frequency")
+        #         _ = plt.title(col)
+        #         _ = plt.legend()
+        #         plt.show()
+        draw_hists(cleaned_df)
 
 
 
