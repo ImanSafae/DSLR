@@ -1,8 +1,10 @@
 from utils import *
 
-def sigmoid_with_params(x, params, bias):
-    return 1 / (1 + np.exp(-(np.dot(x, params)) + bias))
+def sigmoid_with_params(x, params):
+    return 1 / (1 + np.exp(-(np.dot(x, params))))
+    
 
+    
 def standardize_cols(df):
     for col in df:
         if col != "Hogwarts House":
@@ -13,31 +15,46 @@ def log_loss(y, y_pred):
     total = len(y)
     return -np.sum(y * np.log(y_pred) + (1 - y) * np.log(1 - y_pred)) / total
 
+
+def get_gradient_descent(y, y_pred, x, index):
+    diff = y_pred - y
+    dot_product = np.dot(x[:, index], diff)
+    print(f"Index: {index}")
+    print(f"y_pred - y: {diff}")
+    print(f"Dot product: {dot_product}")
+    print(f"y.size: {y.size}")
+    gradient = dot_product / y.size
+    print(f"Gradient: {gradient}")
+    return gradient
+
 def train_for_house(df, house, nb_of_features):
     weights = np.random.rand(nb_of_features)
-    bias = 0
-    learning_rate = 0.01
+    learning_rate = 0.001
     y = df["Hogwarts House"].apply(lambda x: 1 if x == house else 0)
     x = df.drop("Hogwarts House", axis=1).values
-    print("X:", x)
-    print("Y:", y)
+    # print("X:", x)
+    # print("Y:", y)
 
     epochs = 1000
     for epoch in range(epochs):
-
-        predictions_matrix = sigmoid_with_params(x, weights, bias)
+        predictions_matrix = sigmoid_with_params(x, weights)
         loss = log_loss(y, predictions_matrix)
         if epoch % 100 == 0:
             print(f"Epoch {epoch} loss: {loss}")
-            print("Predictions matrix:", predictions_matrix)
-        if loss < 0.1:
-            break
-        weight_gradients = (1 / len(y)) * np.dot(x.T, (predictions_matrix - y))
-        bias_gradient = (1 / len(y)) * np.sum(predictions_matrix - y)
+            # print("Predictions matrix:", predictions_matrix)
 
-        # Mettre à jour les poids
+        if loss < 0.1:
+            print("Epoch: ", epoch)
+            print("Loss is less than 0.1: ", loss)
+            break
+
+        weight_gradients = []
+        for i in range(nb_of_features):
+            new_gradient = get_gradient_descent(y, predictions_matrix, x, i)
+            weight_gradients.append(new_gradient)
+
+        weight_gradients = np.array(weight_gradients)
         weights -= learning_rate * weight_gradients
-        bias -= learning_rate * bias_gradient
 
     
 
@@ -49,12 +66,9 @@ if __name__ == "__main__":
     df = load(sys.argv[1])
     cleaned_df = clean_df_keep_house(df)
     cleaned_df = standardize_cols(cleaned_df)
-    # print("Cleaned and standardized data:\n", cleaned_df)
 
     nb_of_entries = len(df)
     nb_of_features = get_nb_of_features(cleaned_df)
-    # train_set = df[0:int(nb_of_entries*0.7)]
-    # test_set = df[int(nb_of_entries*0.7):]
 
     houses = ["Gryffindor", "Hufflepuff", "Ravenclaw", "Slytherin"]
 
