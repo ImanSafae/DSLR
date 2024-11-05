@@ -3,8 +3,6 @@ from utils import *
 def sigmoid_with_params(x, params):
     return 1 / (1 + np.exp(-(np.dot(x, params))))
     
-
-    
 def standardize_cols(df):
     for col in df:
         if col != "Hogwarts House":
@@ -19,42 +17,39 @@ def log_loss(y, y_pred):
 def get_gradient_descent(y, y_pred, x, index):
     diff = y_pred - y
     dot_product = np.dot(x[:, index], diff)
-    print(f"Index: {index}")
-    print(f"y_pred - y: {diff}")
-    print(f"Dot product: {dot_product}")
-    print(f"y.size: {y.size}")
     gradient = dot_product / y.size
-    print(f"Gradient: {gradient}")
     return gradient
 
 def train_for_house(df, house, nb_of_features):
-    weights = np.random.rand(nb_of_features)
-    learning_rate = 0.001
-    y = df["Hogwarts House"].apply(lambda x: 1 if x == house else 0)
-    x = df.drop("Hogwarts House", axis=1).values
-    # print("X:", x)
-    # print("Y:", y)
+    try:
+        weights = np.random.rand(nb_of_features)
+        learning_rate = 0.04
+        y = df["Hogwarts House"].apply(lambda x: 1 if x == house else 0)
+        x = df.drop("Hogwarts House", axis=1).values
 
-    epochs = 1000
-    for epoch in range(epochs):
-        predictions_matrix = sigmoid_with_params(x, weights)
-        loss = log_loss(y, predictions_matrix)
-        if epoch % 100 == 0:
-            print(f"Epoch {epoch} loss: {loss}")
-            # print("Predictions matrix:", predictions_matrix)
+        epochs = 8000
+        for epoch in range(epochs):
+            predictions_matrix = sigmoid_with_params(x, weights)
 
-        if loss < 0.1:
-            print("Epoch: ", epoch)
-            print("Loss is less than 0.1: ", loss)
-            break
+            loss = log_loss(y, predictions_matrix)
+            if epoch % 500 == 0:
+                # print(f"Epoch {epoch} loss: {loss}")
 
-        weight_gradients = []
-        for i in range(nb_of_features):
-            new_gradient = get_gradient_descent(y, predictions_matrix, x, i)
-            weight_gradients.append(new_gradient)
+            if loss < 0.1:
+                print("Epoch: ", epoch)
+                print("Loss is less than 0.1: ", loss)
+                break
 
-        weight_gradients = np.array(weight_gradients)
-        weights -= learning_rate * weight_gradients
+            weight_gradients = []
+            for i in range(nb_of_features):
+                new_gradient = get_gradient_descent(y, predictions_matrix, x, i)
+                weight_gradients.append(new_gradient)
+
+            weight_gradients = np.array(weight_gradients)
+            weights -= learning_rate * weight_gradients
+        
+    except Exception as e:
+        print("Error in train_for_house:", e)
 
     
 

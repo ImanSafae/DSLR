@@ -53,7 +53,7 @@ def clean_df_keep_house(df: pd.DataFrame):
         cleaned_df = pd.concat([numeric_df, cleaned_df[['Hogwarts House']]], axis=1)
     else:
         cleaned_df = numeric_df
-        cleaned_df = cleaned_df.dropna(ignore_index=True)
+    cleaned_df = cleaned_df.dropna(ignore_index=True)
     return cleaned_df
 
 def sigmoid(x):
