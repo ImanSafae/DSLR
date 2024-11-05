@@ -33,7 +33,7 @@ def train_for_house(df, house, nb_of_features):
 
             loss = log_loss(y, predictions_matrix)
             if epoch % 500 == 0:
-                # print(f"Epoch {epoch} loss: {loss}")
+                print(f"Epoch {epoch} loss: {loss}")
 
             if loss < 0.1:
                 print("Epoch: ", epoch)
@@ -50,6 +50,7 @@ def train_for_house(df, house, nb_of_features):
         
     except Exception as e:
         print("Error in train_for_house:", e)
+    return weights
 
     
 
@@ -67,7 +68,10 @@ if __name__ == "__main__":
 
     houses = ["Gryffindor", "Hufflepuff", "Ravenclaw", "Slytherin"]
 
-
+    ret = pd.DataFrame(columns=cleaned_df.columns, index=houses)
+    ret.drop("Hogwarts House", axis=1, inplace=True)
     for house in houses:
-        train_for_house(cleaned_df, house, nb_of_features)
+        weights = train_for_house(cleaned_df, house, nb_of_features)
+        ret.loc[house] = weights
+    print(ret)
 
