@@ -39,6 +39,12 @@ def remove_columns(df: pd.DataFrame, columns: list):
         print(e)
     return ret
 
+def clean_df_replace_na(df: pd.DataFrame, value: float):
+    cleaned_df = remove_columns(df, ["Index", "Hogwarts House"])
+    cleaned_df = cleaned_df.select_dtypes(include=['number'])
+    cleaned_df = cleaned_df.fillna(value)
+    return cleaned_df
+
 def clean_df(df: pd.DataFrame):
     cleaned_df = remove_columns(df, ["Index"])
     cleaned_df = cleaned_df.select_dtypes(include=['number'])

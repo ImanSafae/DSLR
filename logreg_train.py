@@ -65,6 +65,7 @@ if __name__ == "__main__":
 
     nb_of_entries = len(df)
     nb_of_features = get_nb_of_features(cleaned_df)
+    file = open("houses.csv", "w")
 
     houses = ["Gryffindor", "Hufflepuff", "Ravenclaw", "Slytherin"]
 
@@ -73,5 +74,7 @@ if __name__ == "__main__":
     for house in houses:
         weights = train_for_house(cleaned_df, house, nb_of_features)
         ret.loc[house] = weights
+    ret.to_csv(file)
+    file.close()
     print(ret)
 
