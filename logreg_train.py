@@ -2,12 +2,6 @@ from utils import *
 
 def sigmoid_with_params(x, params):
     return 1 / (1 + np.exp(-(np.dot(x, params))))
-    
-def standardize_cols(df):
-    for col in df:
-        if col != "Hogwarts House":
-            df[col] = standardize(df[[col]])
-    return df
 
 def log_loss(y, y_pred):
     total = len(y)
@@ -65,7 +59,7 @@ if __name__ == "__main__":
 
     nb_of_entries = len(df)
     nb_of_features = get_nb_of_features(cleaned_df)
-    file = open("houses.csv", "w")
+    file = open("weights.csv", "w")
 
     houses = ["Gryffindor", "Hufflepuff", "Ravenclaw", "Slytherin"]
 
@@ -76,5 +70,4 @@ if __name__ == "__main__":
         ret.loc[house] = weights
     ret.to_csv(file)
     file.close()
-    print(ret)
 

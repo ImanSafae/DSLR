@@ -63,7 +63,7 @@ def clean_df_keep_house(df: pd.DataFrame):
     return cleaned_df
 
 def sigmoid(x):
-    return 1 / (1 + math.exp(-x))
+    return 1 / (1 + np.exp(-x))
 
 def standardize(df: pd.DataFrame):
     ret = df
@@ -74,6 +74,12 @@ def standardize(df: pd.DataFrame):
     except Exception as e:
         print(e)
     return ret
+
+def standardize_cols(df):
+    for col in df:
+        if col != "Hogwarts House":
+            df[col] = standardize(df[[col]])
+    return df
 
 def get_nb_of_features(df: pd.DataFrame):
     ret = 0
