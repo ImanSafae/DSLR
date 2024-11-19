@@ -2,20 +2,22 @@
 
 from utils import *
 
-# def load(path: str):
-#     ret = None
+def calculate_percentile(data, percentile):
+    sorted_data = sorted(map(float, data))
 
-#     try:
-#         if (isinstance(path, str) is False):
-#             raise ValueError("Path must be a string")
-#         if (path.endswith(".csv") is False):
-#             raise ValueError("Path must be a csv file")
-#         if (os.path.exists(path) is False):
-#             raise ValueError("File not found")
-#         ret = pd.read_csv(path)
-#     except Exception as e:
-#         print(e)
-#     return ret
+    rank = (percentile / 100.0) * (len(sorted_data) - 1)
+    lower_index = int(rank)
+    upper_index = lower_index + 1 
+
+    if upper_index >= len(sorted_data):
+        return sorted_data[lower_index]
+    weight = rank - lower_index
+    return sorted_data[lower_index] * (1 - weight) + sorted_data[upper_index] * weight
+
+def iqr_of_col(first_quartile, third_quartile):
+    iqr = third_quartile - first_quartile
+    return iqr
+    
 
 def count_rows_in_col(df: pd.DataFrame, col:str):
     ret = None
@@ -199,10 +201,11 @@ def ft_describe(df: pd.DataFrame):
             median = median_of_col(df, col, length)
             third_quartile = third_quartile_of_col(df, col, length)
             max = max_of_col(df, col)
-            rows = [length, mean, std, min, first_quartile, median, third_quartile, max]
+            iqr  = iqr_of_col(first_quartile, third_quartile)
+            rows = [length, mean, std, min, first_quartile, median, third_quartile, max, iqr]
             if (ret is None):
                 ret = pd.DataFrame({col: rows})
-                ret.index = ["Count", "Mean", "Std", "Min", "25%", "50%", "75%", "Max"]
+                ret.index = ["Count", "Mean", "Std", "Min", "25%", "50%", "75%", "Max","IQR"]
             else:
                 ret.insert(len(ret.columns), col, rows)
     except Exception as e:
@@ -223,7 +226,6 @@ if __name__ == "__main__":
     if (df is None):
         sys.exit(1)
 
-    print("df:", df)
     cleaned_df = clean_df(df)
     print(ft_describe(cleaned_df))
     # print('---------------------------')

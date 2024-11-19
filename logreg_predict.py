@@ -1,4 +1,5 @@
 from utils import *
+from sklearn.metrics import accuracy_score
 
 def get_house_probability(house, data, house_weights):
     z = np.dot(data, house_weights)
@@ -42,3 +43,10 @@ if __name__ == "__main__":
     predictions = predict(data, houses, weights)
     with open("houses.csv", "w") as outfile:
         predictions.to_csv(outfile)
+    
+    test_data = pd.read_csv('datasets/dataset_train.csv')
+    predicted_data = pd.read_csv('houses.csv')
+    true_labels = test_data['Hogwarts House']
+    predicted_labels = predicted_data['Hogwarts House']
+    accuracy = accuracy_score(true_labels, predicted_labels)
+    print(f"L'accuracy de votre modèle est : {accuracy * 100:.2f}%")
